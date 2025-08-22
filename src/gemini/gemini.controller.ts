@@ -1,5 +1,6 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { GeminiService } from './gemini.service';
+import { BasicPromptDto } from './dtos/basic-prompt.dto';
 
 @Controller('gemini')
 export class GeminiController {
@@ -12,8 +13,9 @@ export class GeminiController {
   }
 
   @Post('basic-prompt')
-  basicPrompt() {
-    return this.geminiService.basicPrompt();
+  basicPrompt(@Body() basicPromptDto: BasicPromptDto) {
+    // return basicPrompDto;
+    return this.geminiService.basicPrompt(basicPromptDto);
   }
 
 }
