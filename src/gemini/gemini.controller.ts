@@ -18,4 +18,10 @@ export class GeminiController {
     return this.geminiService.basicPrompt(basicPromptDto);
   }
 
+  @Post('basic-prompt-stream')
+  basicPromptStream(@Body() basicPromptDto: BasicPromptDto) {
+    // return basicPrompDto;
+    return this.geminiService.basicPromptStream(basicPromptDto);
+  }
+
 }

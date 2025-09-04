@@ -21,6 +21,11 @@ export class GeminiService {
         // });
         // console.log(response.text);
         // return response.text;
+    
+    }
+    async basicPromptStream(basicPromptDto: BasicPromptDto) {
+        // return basicPromptUseCase(this.ai, basicPromptDto);
+        return 'Hola mundo desde stream';
     }
 }
 
