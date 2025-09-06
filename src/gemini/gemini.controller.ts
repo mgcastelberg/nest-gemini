@@ -17,6 +17,12 @@ export class GeminiController {
   basicPrompt(@Body() basicPromptDto: BasicPromptDto) {
     // return basicPrompDto;
     return this.geminiService.basicPrompt(basicPromptDto);
+  
+  }
+  @Post('translate')
+  translate(@Body() basicPromptDto: BasicPromptDto) {
+    // return basicPrompDto;
+    return this.geminiService.translate(basicPromptDto);
   }
 
   @Post('basic-prompt-stream')
