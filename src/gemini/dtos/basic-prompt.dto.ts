@@ -5,9 +5,8 @@ export class BasicPromptDto {
     @IsNotEmpty()
     prompt: string;
 
-    @IsObject()
     @IsOptional()
-    file: Express.Multer.File;
+    file?: Express.Multer.File;
 }
 
 

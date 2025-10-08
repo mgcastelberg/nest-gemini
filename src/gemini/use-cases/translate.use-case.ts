@@ -11,8 +11,8 @@ export const translateUseCase = async (ai: GoogleGenAI, basicPromptDto: BasicPro
 
     const {
         model="gemini-2.5-flash",
-        targetLangs = { eng: "inglés", fra: "francés" }, 
-        systemInstruction=`Responde únicamente en español en formato markdown. Usa negritas de esta forma __  usa el sistema metrico decimal`
+        targetLangs = { es: "español", pt: "português", it: "italiano", en: "inglés", ru: "ruso" }, 
+        systemInstruction=`Responde estrictamente en formato JSON válido, sin texto adicional.`
     } = options ?? {};
 
     // Construimos la instrucción

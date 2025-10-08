@@ -1,24 +1,16 @@
 import { createPartFromUri, createUserContent, GoogleGenAI } from "@google/genai";
-import { BasicPromptDto } from '../dtos/basic-prompt.dto';
+import { BasicPromptDtoFiles } from "../dtos/basic-prompt-files.dto";
 
 interface Options {
     model?: string;
     systemInstruction?: string;
 }
 
-export const basicPromptStreamUseCase = async (ai: GoogleGenAI, basicPromptDto: BasicPromptDto, options?: Options) => {
+export const basicPromptStreamFilesUseCase = async (ai: GoogleGenAI, basicPromptDtoFiles: BasicPromptDtoFiles, options?: Options) => {
 
-    // const file = basicPromptDto.file;
-    const { prompt, file } = basicPromptDto;
-    console.log(file);
+    const files = basicPromptDtoFiles.files;
 
-    if (!file) {
-    throw new Error("No se envió un archivo");
-    }
-
-    const image = await ai.files.upload({
-        file: new Blob([new Uint8Array(file.buffer)], { type: file.mimetype }),
-    });
+    console.log({files});
 
     const {
         model="gemini-2.5-flash",
@@ -30,9 +22,9 @@ export const basicPromptStreamUseCase = async (ai: GoogleGenAI, basicPromptDto: 
             // contents: basicPromptDto.prompt,
             contents: [
                 createUserContent([
-                    prompt,
+                    basicPromptDtoFiles.prompt,
                     // Imagenes o archivos
-                    createPartFromUri(image.uri ?? "", image.mimeType ?? ""),
+                    // createPartFromUri(image.uri ?? "", image.mimeType ?? ""),
                 ])
             ],
             config: {

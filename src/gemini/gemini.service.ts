@@ -4,6 +4,8 @@ import { GoogleGenAI } from "@google/genai";
 import { basicPromptUseCase } from './use-cases/basic-prompt.use-case';
 import { basicPromptStreamUseCase } from './use-cases/basic-prompt-stream.use-case';
 import { translateUseCase } from './use-cases/translate.use-case';
+import { BasicPromptDtoFiles } from './dtos/basic-prompt-files.dto';
+import { basicPromptStreamFilesUseCase } from './use-cases/basic-prompt-stream-files.use-case';
 
 @Injectable()
 export class GeminiService {
@@ -28,6 +30,10 @@ export class GeminiService {
     
     async basicPromptStream(basicPromptDto: BasicPromptDto) {
         return basicPromptStreamUseCase(this.ai, basicPromptDto);
+    }
+
+    async basicPromptStreamFiles(basicPromptDtoFiles: BasicPromptDtoFiles) {
+        return basicPromptStreamFilesUseCase(this.ai, basicPromptDtoFiles);
     }
 
     async translate(basicPromptDto: BasicPromptDto) {
