@@ -8,9 +8,23 @@ interface Options {
 
 export const basicPromptStreamFilesUseCase = async (ai: GoogleGenAI, basicPromptDtoFiles: BasicPromptDtoFiles, options?: Options) => {
 
-    const files = basicPromptDtoFiles.files;
+    // const files = basicPromptDtoFiles.files;
+    // console.log({files});
 
-    console.log({files});
+    const { prompt, files = [] } = basicPromptDtoFiles;
+
+    // const firstImage = files[0]!;
+    // const image = await ai.files.upload({
+    //     file: new Blob([new Uint8Array(firstImage.buffer)], { type: firstImage.mimetype }),
+    // });
+
+    const images = await Promise.all(
+        files.map( async(file) => { 
+            return await ai.files.upload({
+                file: new Blob([new Uint8Array(file.buffer)], { type: file.mimetype.includes("image") ? file.mimetype : "image/jpg" }),
+            });
+        })
+    );
 
     const {
         model="gemini-2.5-flash",
@@ -22,9 +36,11 @@ export const basicPromptStreamFilesUseCase = async (ai: GoogleGenAI, basicPrompt
             // contents: basicPromptDto.prompt,
             contents: [
                 createUserContent([
-                    basicPromptDtoFiles.prompt,
+                    prompt,
+                    // basicPromptDtoFiles.prompt,
                     // Imagenes o archivos
-                    // createPartFromUri(image.uri ?? "", image.mimeType ?? ""),
+                    // createPartFromUri(image.uri ?? "", image.mimeType ?? ""), // One image
+                    ...images.map(image => createPartFromUri(image.uri ?? "", image.mimeType ?? ""))
                 ])
             ],
             config: {

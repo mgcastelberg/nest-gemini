@@ -67,7 +67,7 @@ export class GeminiController {
 
     for await (const chunk of stream) {
       const piece = chunk.text;
-      console.log(piece);
+      // console.log(piece);
       res.write(piece);
     }
 
