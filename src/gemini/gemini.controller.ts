@@ -5,10 +5,27 @@ import { GeminiService } from './gemini.service';
 import { BasicPromptDto } from './dtos/basic-prompt.dto';
 import type { Response } from 'express';
 import { BasicPromptDtoFiles } from './dtos/basic-prompt-files.dto';
+import { ChatPromptDto } from './dtos/chat-prompt.dto';
+import { GenerateContentResponse } from '@google/genai';
 
 @Controller('gemini')
 export class GeminiController {
   constructor(private readonly geminiService: GeminiService) {}
+
+  async outputStreamResponse(res: Response, stream: AsyncGenerator<GenerateContentResponse,any,any>) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.status(HttpStatus.OK);
+
+    let resultText = '';
+    for await (const chunk of stream) {
+      const piece = chunk.text;
+      resultText += piece;
+      res.write(piece);
+    }
+
+    res.end();
+    return resultText;
+  }
   
   @Get()
   getHello(): string {
@@ -62,17 +79,23 @@ export class GeminiController {
     // console.log(files);
     basicPromptDtoFiles.files = files ?? [];
     const stream = await this.geminiService.basicPromptStreamFiles(basicPromptDtoFiles);
-    res.setHeader('Content-Type', 'text/plain');
-    res.status(HttpStatus.OK);
+    const data = await this.outputStreamResponse(res, stream);
+    console.log(data);
+  }
 
-    for await (const chunk of stream) {
-      const piece = chunk.text;
-      // console.log(piece);
-      res.write(piece);
-    }
-
-    res.end();
-
+   // Varios Archivos
+  @Post('chat-stream')
+  @UseInterceptors(FilesInterceptor('files'))
+  async chatStream(
+    @Body() chatPromptDto: ChatPromptDto,
+    @Res() res: Response,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    // console.log(files);
+    chatPromptDto.files = files ?? [];
+    const stream = await this.geminiService.basicPromptStreamFiles(chatPromptDto);
+    const data = await this.outputStreamResponse(res, stream);
+    console.log(data);
   }
 
 }
