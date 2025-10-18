@@ -6,6 +6,8 @@ import { basicPromptStreamUseCase } from './use-cases/basic-prompt-stream.use-ca
 import { translateUseCase } from './use-cases/translate.use-case';
 import { BasicPromptDtoFiles } from './dtos/basic-prompt-files.dto';
 import { basicPromptStreamFilesUseCase } from './use-cases/basic-prompt-stream-files.use-case';
+import { ChatPromptDto } from './dtos/chat-prompt.dto';
+import { chatPromptStreamUseCase } from './use-cases/chat-prompt-stream.use-case';
 
 @Injectable()
 export class GeminiService {
@@ -34,6 +36,10 @@ export class GeminiService {
 
     async basicPromptStreamFiles(basicPromptDtoFiles: BasicPromptDtoFiles) {
         return basicPromptStreamFilesUseCase(this.ai, basicPromptDtoFiles);
+    }
+
+    async chatStreamService(chatPromptDto: ChatPromptDto) {
+        return chatPromptStreamUseCase(this.ai, chatPromptDto);
     }
 
     async translate(basicPromptDto: BasicPromptDto) {

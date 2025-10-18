@@ -83,7 +83,7 @@ export class GeminiController {
     console.log(data);
   }
 
-   // Varios Archivos
+   // Chat Stream, Files
   @Post('chat-stream')
   @UseInterceptors(FilesInterceptor('files'))
   async chatStream(
@@ -93,9 +93,10 @@ export class GeminiController {
   ) {
     // console.log(files);
     chatPromptDto.files = files ?? [];
-    const stream = await this.geminiService.basicPromptStreamFiles(chatPromptDto);
+    const stream = await this.geminiService.chatStreamService(chatPromptDto);
     const data = await this.outputStreamResponse(res, stream);
-    console.log(data);
+    console.log({text: chatPromptDto.prompt });
+    console.log({data});
   }
 
 }
