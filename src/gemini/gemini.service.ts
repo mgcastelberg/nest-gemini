@@ -14,6 +14,9 @@ export class GeminiService {
 
     private ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
+    // todo: mantener en memoria el chat
+
+
     async basicPrompt(basicPromptDto: BasicPromptDto) {
 
         return basicPromptUseCase(this.ai, basicPromptDto);
