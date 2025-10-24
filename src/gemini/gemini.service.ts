@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BasicPromptDto } from './dtos/basic-prompt.dto';
-import { GoogleGenAI } from "@google/genai";
+import { Content, GoogleGenAI } from "@google/genai";
 import { basicPromptUseCase } from './use-cases/basic-prompt.use-case';
 import { basicPromptStreamUseCase } from './use-cases/basic-prompt-stream.use-case';
 import { translateUseCase } from './use-cases/translate.use-case';
@@ -14,8 +14,8 @@ export class GeminiService {
 
     private ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
-    // todo: mantener en memoria el chat
-
+    // Mantener en memoria el chat
+    private chatHistory = new Map<string, Content[]>();
 
     async basicPrompt(basicPromptDto: BasicPromptDto) {
 
@@ -42,12 +42,25 @@ export class GeminiService {
     }
 
     async chatStreamService(chatPromptDto: ChatPromptDto) {
-        return chatPromptStreamUseCase(this.ai, chatPromptDto);
+        const chatHistory = this.getChatHistory(chatPromptDto.chatId) ?? [];
+        return chatPromptStreamUseCase(this.ai, chatPromptDto, {history: chatHistory});
     }
 
     async translate(basicPromptDto: BasicPromptDto) {
         return translateUseCase(this.ai, basicPromptDto);    
     }
+
+    saveMessage(chatId: string, message: Content) {
+        const messages = this.getChatHistory(chatId) ?? [];
+        messages.push(message);
+        this.chatHistory.set(chatId, messages);
+        console.log(this.chatHistory);
+    };
+
+    getChatHistory(chatId: string) {
+        // rompe el referencia, para que no lo mute gemini
+        return structuredClone(this.chatHistory.get(chatId)) ?? [];
+    };
 }
 
 // systemInstruction: "You are a helpful assistant."

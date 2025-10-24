@@ -1,10 +1,11 @@
-import { createPartFromUri, GoogleGenAI } from "@google/genai";
+import { Content, createPartFromUri, GoogleGenAI } from "@google/genai";
 import { ChatPromptDto } from '../dtos/chat-prompt.dto';
 import { geminiUploadFiles } from "../helpers/gemini-upload";
 
 interface Options {
     model?: string;
     systemInstruction?: string;
+    history: Content[];
 }
 
 export const chatPromptStreamUseCase = async (ai: GoogleGenAI, chatPromptDto: ChatPromptDto, options?: Options) => {
@@ -14,6 +15,7 @@ export const chatPromptStreamUseCase = async (ai: GoogleGenAI, chatPromptDto: Ch
 
     const {
         model="gemini-2.5-flash",
+        history=[],
         systemInstruction=`Responde únicamente en español en formato markdown. Usa negritas de esta forma __  usa el sistema metrico decimal`
     } = options ?? {};
 
@@ -22,16 +24,7 @@ export const chatPromptStreamUseCase = async (ai: GoogleGenAI, chatPromptDto: Ch
         config: {
             systemInstruction: systemInstruction,
         },
-        history: [
-            {
-                role: "user",
-                parts: [{ text: "Hola" }],
-            },
-            {
-                role: "model",
-                parts: [{ text: "Hola mundo, ¿que tal?" }],
-            },
-        ],
+        history: history,
     });
     
     return chat.sendMessageStream({
