@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Res, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 import { GeminiService } from './gemini.service';
@@ -63,7 +63,7 @@ export class GeminiController {
       console.log(piece);
       res.write(piece);
     }
-
+    console.log('backend basicPromptStream');
     res.end();
 
   }
@@ -80,6 +80,7 @@ export class GeminiController {
     basicPromptDtoFiles.files = files ?? [];
     const stream = await this.geminiService.basicPromptStreamFiles(basicPromptDtoFiles);
     const data = await this.outputStreamResponse(res, stream);
+    console.log('backend basic-prompt-stream-v2');
     console.log(data);
   }
 
@@ -109,8 +110,17 @@ export class GeminiController {
     this.geminiService.saveMessage(chatPromptDto.chatId, userMessage);
     this.geminiService.saveMessage(chatPromptDto.chatId, geminiMessage);
 
+    console.log('chat-stream');
     // console.log({text: chatPromptDto.prompt });
     // console.log({data});
+  }
+
+  @Get('chat-history/:chatId')
+  getChatHistory(@Param('chatId') chatId: string) {
+    return this.geminiService.getChatHistory(chatId).map(message => ({
+      role: message.role,
+      parts:message.parts?.map((part) => part.text).join('')
+    }));
   }
 
 }
